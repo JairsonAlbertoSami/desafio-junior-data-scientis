@@ -55,3 +55,17 @@ GROUP BY b.subprefeitura
 ORDER BY total_chamados DESC
 LIMIT 1;
 
+
+-- 5. Chamados sem bairro ou subprefeitura no dia 01/04/2023
+WITH chamados_selecionados AS (
+  SELECT 
+    id_bairro,
+    PARSE_DATE('%Y-%m-%d', FORMAT_DATE('%Y-%m-%d', CAST(data_inicio AS DATE))) AS data_formatada
+  FROM `datario.adm_central_atendimento_1746.chamado`
+  WHERE PARSE_DATE('%Y-%m-%d', FORMAT_DATE('%Y-%m-%d', CAST(data_inicio AS DATE))) = '2023-04-01'
+)
+SELECT c.*
+FROM chamados_selecionados c
+LEFT JOIN `datario.dados_mestres.bairro` b
+ON c.id_bairro = b.id_bairro
+WHERE b.id_bairro IS NULL;
