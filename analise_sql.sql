@@ -79,27 +79,40 @@ WHERE subtipo = 'Perturbação do sossego'
 AND data_inicio BETWEEN '2022-01-01' AND '2023-12-31';
 
 
--- 7. Chamados com subtipo "Perturbação do sossego" durante eventos específicos
+-- 7 Contagem de chamados de "Perturbação do sossego" durante eventos específicos
+WITH chamados_eventos AS (
+    SELECT 
+        c.id_chamado,
+        CASE
+            WHEN e.evento = 'Carnaval' AND (c.data_inicio BETWEEN e.data_inicial AND e.data_final
+                                           OR (c.data_fim IS NOT NULL AND c.data_fim BETWEEN e.data_inicial AND e.data_final))
+            THEN 'Carnaval'
+            WHEN e.evento = 'Reveillon' AND (c.data_inicio BETWEEN e.data_inicial AND e.data_final
+                                             OR (c.data_fim IS NOT NULL AND c.data_fim BETWEEN e.data_inicial AND e.data_final))
+            THEN 'Reveillon'
+            WHEN e.evento = 'Rock in Rio' AND (c.data_inicio BETWEEN e.data_inicial AND e.data_final
+                                                OR (c.data_fim IS NOT NULL AND c.data_fim BETWEEN e.data_inicial AND e.data_final))
+            THEN 'Rock in Rio'
+            ELSE NULL
+        END AS evento
+    FROM 
+        `datario.adm_central_atendimento_1746.chamado` c
+    JOIN 
+        `datario.turismo_fluxo_visitantes.rede_hoteleira_ocupacao_eventos` e
+    ON 
+        (c.data_inicio <= e.data_final AND (c.data_fim IS NULL OR c.data_fim >= e.data_inicial))
+    WHERE 
+        c.subtipo = 'Perturbação do sossego'
+)
+
+-- Filtra eventos específicos e conta o total de chamados
 SELECT 
-    c.*, 
-    CASE 
-        WHEN c.data_inicio BETWEEN e.data_inicial AND e.data_final 
-            AND e.evento = 'Reveillon' THEN 'Reveillon'
-        WHEN c.data_inicio BETWEEN e.data_inicial AND e.data_final 
-            AND e.evento = 'Carnaval' THEN 'Carnaval'
-        WHEN c.data_inicio BETWEEN e.data_inicial AND e.data_final 
-            AND e.evento = 'Rock in Rio' THEN 'Rock in Rio'
-        ELSE 'Outro Evento'
-    END AS evento
+    COUNT(id_chamado) AS total_chamados
 FROM 
-    `datario.adm_central_atendimento_1746.chamado` c
-JOIN 
-    `datario.turismo_fluxo_visitantes.rede_hoteleira_ocupacao_eventos` e
-ON 
-    c.data_inicio BETWEEN e.data_inicial AND e.data_final
+    chamados_eventos
 WHERE 
-    c.subtipo = 'Perturbação do sossego'
-    AND e.evento IN ('Reveillon', 'Carnaval', 'Rock in Rio');
+    evento IS NOT NULL
+    AND evento IN ('Carnaval', 'Reveillon', 'Rock in Rio');
 
 
 -- 8 Selecione os chamados com esse subtipo que foram abertos durante os eventos contidos na tabela de eventos (Reveillon, Carnaval e Rock in Rio).
