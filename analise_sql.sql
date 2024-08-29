@@ -69,3 +69,10 @@ FROM chamados_selecionados c
 LEFT JOIN `datario.dados_mestres.bairro` b
 ON c.id_bairro = b.id_bairro
 WHERE b.id_bairro IS NULL;
+
+
+-- 6. Quantos chamados com o subtipo "Perturbação do sossego" foram abertos de 01/01/2022 a 31/12/2023?
+SELECT COUNT(*) AS total_chamados
+FROM `datario.adm_central_atendimento_1746.chamado`
+WHERE subtipo = 'Perturbação do sossego'
+AND data_inicio BETWEEN '2022-01-01' AND '2023-12-31';
