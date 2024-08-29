@@ -61,12 +61,13 @@ WITH chamados_selecionados AS (
   SELECT 
     id_bairro,
     PARSE_DATE('%Y-%m-%d', FORMAT_DATE('%Y-%m-%d', CAST(data_inicio AS DATE))) AS data_formatada
-  FROM `datario.adm_central_atendimento_1746.chamado`
+  FROM datario.adm_central_atendimento_1746.chamado
   WHERE PARSE_DATE('%Y-%m-%d', FORMAT_DATE('%Y-%m-%d', CAST(data_inicio AS DATE))) = '2023-04-01'
 )
-SELECT c.*
+SELECT 
+  COUNT(*) AS total_chamados_sem_bairro
 FROM chamados_selecionados c
-LEFT JOIN `datario.dados_mestres.bairro` b
+LEFT JOIN datario.dados_mestres.bairro b
 ON c.id_bairro = b.id_bairro
 WHERE b.id_bairro IS NULL;
 
