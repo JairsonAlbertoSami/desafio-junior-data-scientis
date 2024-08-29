@@ -1,6 +1,6 @@
 # Desafio Júnior Data Scientist
 
-Neste repositório, temos 5 arquivos: `Analise_api.ipynb`, `Analise_python.ipynb`, `visualizacao_analise_API.ipynb`, `visualizacao_analise_Python.ipynb` e `analise_sql.sql`. Cada um desses arquivos responde a um conjunto de questões propostas para o desafio Júnior de Data Science do Rio de Janeiro. Este `README.md` orienta como executar cada arquivo de maneira que não dependa da base de dados do autor.
+Neste repositório, temos 5 arquivos: `Analise_api.ipynb`, `Analise_python.ipynb`, `visualizacao_analise_API.ipynb`, `visualizacao_analise_Python.ipynb` e `analise_sql.sql`. Cada um desses arquivos responde a um conjunto de questões propostas para o Desafio Técnico - Cientista de Dados Júnior - Rio de Janeiro. Este `README.md` orienta como executar cada arquivo de maneira que não dependa da base de dados do autor.
 
 1. **Para executar `Analise_api.ipynb`:** 
    - Baixe o arquivo `.ipynb` e faça upload para o seu Google Drive.
