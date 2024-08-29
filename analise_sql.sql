@@ -76,3 +76,27 @@ SELECT COUNT(*) AS total_chamados
 FROM `datario.adm_central_atendimento_1746.chamado`
 WHERE subtipo = 'Perturbação do sossego'
 AND data_inicio BETWEEN '2022-01-01' AND '2023-12-31';
+
+
+-- 7. Chamados com subtipo "Perturbação do sossego" durante eventos específicos
+SELECT 
+    c.*, 
+    CASE 
+        WHEN c.data_inicio BETWEEN e.data_inicial AND e.data_final 
+            AND e.evento = 'Reveillon' THEN 'Reveillon'
+        WHEN c.data_inicio BETWEEN e.data_inicial AND e.data_final 
+            AND e.evento = 'Carnaval' THEN 'Carnaval'
+        WHEN c.data_inicio BETWEEN e.data_inicial AND e.data_final 
+            AND e.evento = 'Rock in Rio' THEN 'Rock in Rio'
+        ELSE 'Outro Evento'
+    END AS evento
+FROM 
+    `datario.adm_central_atendimento_1746.chamado` c
+JOIN 
+    `datario.turismo_fluxo_visitantes.rede_hoteleira_ocupacao_eventos` e
+ON 
+    c.data_inicio BETWEEN e.data_inicial AND e.data_final
+WHERE 
+    c.subtipo = 'Perturbação do sossego'
+    AND e.evento IN ('Reveillon', 'Carnaval', 'Rock in Rio');
+
