@@ -150,4 +150,63 @@ GROUP BY
 ORDER BY 
     total_chamados DESC;
 
+--- 9. Qual evento teve a maior média diária de chamados abertos desse subtipo?
+
+WITH eventos AS (
+    SELECT 
+        e.evento,
+        e.data_inicial,
+        e.data_final,
+        DATE_DIFF(e.data_final, e.data_inicial, DAY) + 1 AS duracao
+    FROM 
+        `datario.turismo_fluxo_visitantes.rede_hoteleira_ocupacao_eventos` e
+    WHERE 
+        e.evento IN ('Reveillon', 'Carnaval', 'Rock in Rio')
+),
+
+chamados_eventos AS (
+    SELECT 
+        CASE
+            WHEN c.data_inicio BETWEEN e.data_inicial AND e.data_final THEN e.evento
+            ELSE NULL
+        END AS evento,
+        COUNT(*) AS total_chamados
+    FROM 
+        `datario.adm_central_atendimento_1746.chamado` c
+    JOIN 
+        eventos e
+    ON 
+        c.data_inicio BETWEEN e.data_inicial AND e.data_final
+    WHERE 
+        c.subtipo = 'Perturbação do sossego'
+    GROUP BY 
+        evento
+    HAVING 
+        evento IS NOT NULL
+),
+
+media_diaria_eventos AS (
+    SELECT 
+        e.evento,
+        SUM(ce.total_chamados) / e.duracao AS media_diaria
+    FROM 
+        eventos e
+    LEFT JOIN 
+        chamados_eventos ce
+    ON 
+        e.evento = ce.evento
+    GROUP BY 
+        e.evento, e.duracao
+)
+
+SELECT 
+    evento,
+    media_diaria
+FROM 
+    media_diaria_eventos
+ORDER BY 
+    media_diaria DESC
+LIMIT 4;
+
+
 
