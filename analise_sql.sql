@@ -114,7 +114,6 @@ WHERE
     evento IS NOT NULL
     AND evento IN ('Carnaval', 'Reveillon', 'Rock in Rio');
 
-
 -- 8 Selecione os chamados com esse subtipo que foram abertos durante os eventos contidos na tabela de eventos (Reveillon, Carnaval e Rock in Rio).
 
 WITH eventos AS (
